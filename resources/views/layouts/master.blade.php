@@ -18,6 +18,22 @@
     </header>
 
     @yield('content')
+
+    <script type="text/javascript" id="cookiebanner" 
+        src="https://cdn.jsdelivr.net/gh/dobarkod/cookie-banner@1.2.2/dist/cookiebanner.min.js"
+        data-message="We use cookies to improve your browsing experience."
+        data-bg="#F97316"
+        data-fg="#ffffff"
+        data-link="#7C2D12"
+        data-font-size=".9rem"
+        >
+    </script>
     <script type="text/javascript" src="{{ asset('js/app.js') }}"></script>
+    <style>
+        .cookiebanner {
+            padding-top: .9rem !important;
+            padding-bottom: .9rem !important;
+        }
+    </style>
 </body>
 </html>
