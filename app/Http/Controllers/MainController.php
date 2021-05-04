@@ -52,7 +52,8 @@ class MainController extends Controller
 
     function get_api($request) {
         $ip = $request->ip();
-        $ip = '178.40.244.195';
+        //$ip = '178.40.244.195'; //localhost set custom vpn for testing and serving
+
         $client = new \GuzzleHttp\Client();
         $ipstackResponse = $client->request('GET', "http://api.ipstack.com/$ip?access_key=" . env('IPSTACK_ACCESS_KEY'));
         $ipstack = json_decode($ipstackResponse->getBody());
@@ -64,6 +65,8 @@ class MainController extends Controller
     }
 
     function count_visits($ipstack, $openweather, $pagename, $request){
+        $ip = $request->ip();
+
         $viewsCity = ViewsCity::where('country', '=', $ipstack->country_name)->where('city', '=', $ipstack->city)->first();
         if (!$viewsCity) {
             $viewsCity = new ViewsCity();
@@ -72,11 +75,13 @@ class MainController extends Controller
             $viewsCity->flag = $ipstack->location->country_flag;
             $viewsCity->lat = $ipstack->latitude;
             $viewsCity->lng = $ipstack->longitude;
+            $viewsCity->count += 1;
+            Cookie::queue('today', $ip, time() + 86400); // 24 hours
         }
 
         if($request->hasCookie('today') == false){
             $viewsCity->count += 1;
-            Cookie::queue('today', 'yes', time() + 86400); // 24 hours
+            Cookie::queue('today', $ip, time() + 86400); // 24 hours
         }
         
         if(!$viewsCity->save()){
